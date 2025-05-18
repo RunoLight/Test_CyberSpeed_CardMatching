@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Domain.Interfaces;
 
-namespace Domain.Entities
+namespace Application
 {
     public class MatchCheckService : IMatchCheckService
     {
@@ -17,7 +17,8 @@ namespace Domain.Entities
         public void TryMatch()
         {
             var faceUp = _state.GetFaceUpCards();
-            if (faceUp.Count != 2) return;
+            if (faceUp.Count != 2)
+                return;
 
             if (faceUp[0].PairId == faceUp[1].PairId)
             {
@@ -26,8 +27,8 @@ namespace Domain.Entities
             }
             else
             {
-                _sound.Play(SoundType.Mismatch);
                 _state.ResetUnmatchedCards();
+                _sound.Play(SoundType.Mismatch);
             }
         }
     }

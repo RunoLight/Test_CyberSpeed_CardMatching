@@ -1,9 +1,9 @@
 ﻿using Application;
+using Application.UseCases;
 using Domain.Data;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.UseCase;
-using Domain.UseCases;
 using Infrastructure;
 using Infrastructure.SaveSystem;
 using Infrastructure.SoundSystem;
@@ -41,13 +41,16 @@ namespace EntryPoint
             }
 
             // UseCases
-            var flipUseCase = new FlipCardUseCase(gameStateService, matchCheckService, soundService);
             var loadGameUseCase = new LoadGameUseCase(saver, gameStateService, fallbackCardProvider);
+            var saveUseCase = new SaveGameUseCase(gameStateService, saver);
+            
+            var flipUseCase = new FlipCardUseCase(gameStateService, matchCheckService, soundService, saveUseCase);
+
             
             loadGameUseCase.Execute();
 
             // ViewModel
-            var viewModel = new GameViewModel(flipUseCase, gameStateService);
+            var viewModel = new GameViewModel(flipUseCase, gameStateService, saveUseCase);
 
             // Link View to ViewModel
             gameView.Init(viewModel, gameStateService.GetAllCards());
