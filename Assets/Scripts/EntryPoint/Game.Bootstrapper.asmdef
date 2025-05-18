@@ -1,0 +1,9 @@
+﻿{
+  "name": "Game.Bootstrapper",
+  "references":[
+    "Game.Domain",
+    "Game.Application",
+    "Game.Infrastructure",
+    "Game.Presentation"
+  ]
+}

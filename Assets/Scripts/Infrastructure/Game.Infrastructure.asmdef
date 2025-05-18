@@ -1,0 +1,4 @@
+﻿{
+  "name": "Game.Infrastructure",
+  "references":[  "Game.Application",  "Game.Domain" ]
+}
