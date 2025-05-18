@@ -1,4 +1,4 @@
 ﻿{
   "name": "Game.Presentation",
-  "references":[ "Game.Infrastructure", "Game.Domain" ]
+  "references":[ "Game.Infrastructure", "Game.Domain", "Game.Application", "Unity.TextMeshPro" ]
 }
