@@ -5,7 +5,8 @@
         Flip,
         Match,
         Mismatch,
-        GameOver
+        GameOver,
+        NewGame
     }
 
     public interface ISoundPlayer

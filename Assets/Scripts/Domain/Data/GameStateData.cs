@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Domain.Entities;
 
 namespace Domain.Data
 {
@@ -7,5 +6,8 @@ namespace Domain.Data
     public class GameStateData
     {
         public List<CardData> cards;
+        public int movesCount;
+        public int score;
+        public double elapsedSeconds;
     }
 }

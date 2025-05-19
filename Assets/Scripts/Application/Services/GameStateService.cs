@@ -5,15 +5,28 @@ using Domain.Data;
 using Domain.Entities;
 using Domain.Interfaces;
 
-namespace Application
+namespace Application.Services
 {
     public class GameStateService : IGameStateService
     {
+        public event Action GameWon;
+        public event Action<List<Card>, int, double, int> GameStateChanged;
         public event Action<Card> CardFlipped;
         public event Action<List<Card>> PairMatched;
         public event Action<List<Card>> PairMismatched;
 
+        private readonly ScoreService _scoreService;
+        private readonly TimerService _timerService;
+        private readonly MovesService _movesService;
+
         private List<Card> _cards = new();
+
+        public GameStateService(ScoreService scoreService, TimerService timerService, MovesService movesService)
+        {
+            _scoreService = scoreService;
+            _timerService = timerService;
+            _movesService = movesService;
+        }
 
         public void FlipCard(int cardId)
         {
@@ -39,6 +52,8 @@ namespace Application
             }
 
             PairMatched?.Invoke(matched);
+
+            TryPerformVictory();
         }
 
         public void ResetUnmatchedCards()
@@ -56,19 +71,40 @@ namespace Application
         public void LoadState(GameStateData data)
         {
             _cards = data.cards.Select(cardData => new Card(cardData)).ToList();
-        }
 
-        public void InitializeNewGame(List<Card> cards)
-        {
-            _cards = cards;
+            _scoreService.SetPoints(data.score);
+            _timerService.SetTime(data.elapsedSeconds);
+            _movesService.SetAmount(data.movesCount);
+
+            _timerService.Start();
+
+            GameStateChanged?.Invoke(_cards,
+                _scoreService.GetScore(),
+                _timerService.GetTime(),
+                _movesService.GetAmount()
+            );
+
+            TryPerformVictory();
         }
 
         public GameStateData SaveState()
         {
             return new GameStateData
             {
-                cards = _cards.Select(c => new CardData(c)).ToList()
+                cards = _cards.Select(c => new CardData(c)).ToList(),
+                score = _scoreService.GetScore(),
+                elapsedSeconds = _timerService.GetTime(),
+                movesCount = _movesService.GetAmount()
             };
+        }
+
+        private void TryPerformVictory()
+        {
+            if (_cards.Any(card => !card.IsMatched))
+                return;
+
+            _timerService.Stop();
+            GameWon?.Invoke();
         }
     }
 }

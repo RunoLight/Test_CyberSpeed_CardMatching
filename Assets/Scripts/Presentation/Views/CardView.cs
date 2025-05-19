@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,15 +7,18 @@ namespace Presentation.Views
 {
     public enum CardState
     {
-        FaceDown, FaceUp, Matched  
+        FaceDown,
+        FaceUp,
+        Matched
     }
-    
-    public class CardView : MonoBehaviour
+
+    public class CardView : UnityEngine.MonoBehaviour
     {
         public int cardId;
         public int pairId;
-        
+
         public CardState state;
+
         // public Animator Animator;
         public System.Action<int> OnClicked;
 
@@ -23,7 +27,7 @@ namespace Presentation.Views
         private Image _image;
 
         private string TextStatus => $"id:{cardId}\npairId:{pairId}\nstate:\n{state}";
-        
+
         private void Awake()
         {
             _button = GetComponent<Button>();
@@ -36,13 +40,17 @@ namespace Presentation.Views
         {
             OnClicked?.Invoke(cardId);
         }
-        
-        public void Init(int id, int pairId)
+
+        public CardView Init(int id, int pId,  Action<int> clickAction)
         {
             cardId = id;
-            this.pairId = pairId;
+            pairId = pId;
+            OnClicked = clickAction;
+
             _text.text = TextStatus;
-            _image.color = GetColorFromNumber(pairId);
+            _image.color = GetColorFromNumber(pId);
+
+            return this;
         }
 
         public void Flip()
@@ -53,16 +61,15 @@ namespace Presentation.Views
 
         public void SetMatched()
         {
-            Debug.Log("Matched");
             state = CardState.Matched;
             _text.text = TextStatus;
 
             // Animator.SetTrigger("Matched");
         }
-        
+
         public void SetFaceUp()
         {
-            Debug.Log("FaceUp");
+            // Debug.Log("FaceUp");
             state = CardState.FaceUp;
             _text.text = TextStatus;
 
@@ -71,14 +78,14 @@ namespace Presentation.Views
 
         public void SetFaceDown()
         {
-            Debug.Log("FaceDown");
+            // Debug.Log("FaceDown");
             state = CardState.FaceDown;
             _text.text = TextStatus;
 
             // Animator.SetBool("FaceUp", false);
         }
-        
-        public static Color GetColorFromNumber(int number)
+
+        private static Color GetColorFromNumber(int number)
         {
             var rng = new System.Random(number); // Number-determined so always same for same number
 

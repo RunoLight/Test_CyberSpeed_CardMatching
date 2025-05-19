@@ -1,7 +1,10 @@
-﻿namespace Domain.Interfaces
+﻿using System.Collections.Generic;
+using Domain.Entities;
+
+namespace Domain.Interfaces
 {
     public interface IMatchCheckService
     {
-        void TryMatch();
+        public MatchResult TryMatch(IReadOnlyList<Card> flippedCards);
     }
 }
