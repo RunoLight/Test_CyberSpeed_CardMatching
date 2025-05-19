@@ -109,11 +109,11 @@ namespace Presentation.Views
         {
             var view = _cardViews[cardId];
             if (card.IsMatched)
-                view.SetMatched();
+                view.SetMatched(true);
             else if (card.IsFaceUp)
-                view.SetFaceUp();
+                view.SetFaceUp(true);
             else
-                view.SetFaceDown();
+                view.SetFaceDown(true);
         }
     }
 }

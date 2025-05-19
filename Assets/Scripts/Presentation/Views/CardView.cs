@@ -5,84 +5,71 @@ using UnityEngine.UI;
 
 namespace Presentation.Views
 {
-    public enum CardState
-    {
-        FaceDown,
-        FaceUp,
-        Matched
-    }
-
     public class CardView : UnityEngine.MonoBehaviour
     {
-        public int cardId;
-        public int pairId;
+        [SerializeField] private Button button;
+        [SerializeField] private TMP_Text text;
+        [SerializeField] private Image image;
+        [SerializeField] private Animator animator;
 
-        public CardState state;
+        private string TextStatus => $"id:{_cardId}\npairId:{_pairId}\nstate:\n{_state}";
 
-        // public Animator Animator;
-        public System.Action<int> OnClicked;
+        private int _cardId;
+        private int _pairId;
+        private CardState _state;
+        private Action<int> _onClicked;
 
-        private Button _button;
-        private TMP_Text _text;
-        private Image _image;
+        private static readonly int FlipFaceUp = Animator.StringToHash("FlipFaceUp");
+        private static readonly int FlipFaceUpInstant = Animator.StringToHash("FlipFaceUpInstant");
+        private static readonly int FlipFaceDown = Animator.StringToHash("FlipFaceDown");
+        private static readonly int FlipFaceDownInstant = Animator.StringToHash("FlipFaceDownInstant");
+        private static readonly int Match = Animator.StringToHash("Match");
+        private static readonly int MatchInstant = Animator.StringToHash("MatchInstant");
 
-        private string TextStatus => $"id:{cardId}\npairId:{pairId}\nstate:\n{state}";
-
-        private void Awake()
+        public CardView Init(int id, int pId, Action<int> clickAction)
         {
-            _button = GetComponent<Button>();
-            _text = GetComponentInChildren<TMP_Text>();
-            _image = GetComponentInChildren<Image>();
-            _button.onClick.AddListener(OnClick);
-        }
+            _cardId = id;
+            _pairId = pId;
+            _onClicked = clickAction;
 
-        private void OnClick()
-        {
-            OnClicked?.Invoke(cardId);
-        }
-
-        public CardView Init(int id, int pId,  Action<int> clickAction)
-        {
-            cardId = id;
-            pairId = pId;
-            OnClicked = clickAction;
-
-            _text.text = TextStatus;
-            _image.color = GetColorFromNumber(pId);
+            text.text = TextStatus;
+            image.color = GetColorFromNumber(pId);
 
             return this;
         }
 
-        public void Flip()
+        public void SetMatched(bool noAnimation = false)
         {
-            Debug.Log("Flip");
-            // Animator.SetTrigger("Flip");
+            _state = CardState.Matched;
+            text.text = TextStatus;
+
+            animator.SetTrigger(noAnimation ? MatchInstant : Match);
         }
 
-        public void SetMatched()
+        public void SetFaceUp(bool noAnimation = false)
         {
-            state = CardState.Matched;
-            _text.text = TextStatus;
+            _state = CardState.FaceUp;
+            text.text = TextStatus;
 
-            // Animator.SetTrigger("Matched");
+            animator.SetTrigger(noAnimation ? FlipFaceUpInstant : FlipFaceUp);
         }
 
-        public void SetFaceUp()
+        public void SetFaceDown(bool noAnimation = false)
         {
-            // Debug.Log("FaceUp");
-            state = CardState.FaceUp;
-            _text.text = TextStatus;
+            _state = CardState.FaceDown;
+            text.text = TextStatus;
 
-            // Animator.SetBool("FaceUp", true);
+            animator.SetTrigger(noAnimation ? FlipFaceDownInstant : FlipFaceDown);
         }
 
-        public void SetFaceDown()
+        private void Awake()
         {
-            // Debug.Log("FaceDown");
-            state = CardState.FaceDown;
-            _text.text = TextStatus;
+            button.onClick.AddListener(OnClick);
+        }
 
-            // Animator.SetBool("FaceUp", false);
+        private void OnClick()
+        {
+            _onClicked?.Invoke(_cardId);
         }
 
         private static Color GetColorFromNumber(int number)
@@ -94,6 +81,13 @@ namespace Presentation.Views
             float b = (float)rng.NextDouble();
 
             return new Color(r, g, b);
+        }
+
+        private enum CardState
+        {
+            FaceDown,
+            FaceUp,
+            Matched
         }
     }
 }
