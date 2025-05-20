@@ -23,12 +23,11 @@ namespace Presentation.Views
         {
             _viewModel = viewModel;
 
-            _viewModel.GameStateService.GameStateChanged += RefreshView;
-            _viewModel.GameStateService.GameWon += OnGameWon;
-            _viewModel.GameStateService.CardFlipped += FlipCard;
-            _viewModel.GameStateService.PairMatched += MatchCardsPair;
-            _viewModel.GameStateService.PairMismatched += MismatchCardsPair;
-
+            _viewModel.GameStateChanged += RefreshView;
+            _viewModel.GameWon += OnGameWon;
+            _viewModel.CardFlipped += FlipCard;
+            _viewModel.PairMatched += MatchCardsPair;
+            _viewModel.PairMismatched += MismatchCardsPair;
             _viewModel.TimeUpdated += SetTime;
             _viewModel.ScoreChanged += SetScore;
             _viewModel.MovesAmountUpdated += SetMoves;
@@ -98,6 +97,8 @@ namespace Presentation.Views
             {
                 var cardView = Instantiate(cardPrefab, cardContainer)
                     .Init(card.Id, card.PairId, HandleCardClicked);
+
+                cardView.OnFaceUpAnimationFinished += _viewModel.FaceUpAnimationFinished;
 
                 _cardViews[card.Id] = cardView;
 

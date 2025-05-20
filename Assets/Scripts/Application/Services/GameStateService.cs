@@ -42,6 +42,19 @@ namespace Application.Services
 
         public List<Card> GetFaceUpCards() => _cards.Where(c => c.IsFaceUp && !c.IsMatched).ToList();
 
+        public (Card first, Card second) GetPairCards(int firstId, int secondId)
+        {
+            return (
+                _cards.First(c => c.Id == firstId),
+                _cards.First(c => c.Id == secondId)
+            );
+        }
+
+        public Card GetCard(int id)
+        {
+            return _cards.First(c => c.Id == id);
+        }
+
         public void MatchCards(List<int> ids)
         {
             var matched = new List<Card>();

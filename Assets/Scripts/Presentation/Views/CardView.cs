@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,8 @@ namespace Presentation.Views
 {
     public class CardView : UnityEngine.MonoBehaviour
     {
+        public event Action<int> OnFaceUpAnimationFinished;
+
         [SerializeField] private Button button;
         [SerializeField] private TMP_Text text;
         [SerializeField] private Image image;
@@ -60,6 +63,12 @@ namespace Presentation.Views
             text.text = TextStatus;
 
             animator.SetTrigger(noAnimation ? FlipFaceDownInstant : FlipFaceDown);
+        }
+
+        [UsedImplicitly]
+        private void FaceUpAnimationFinished()
+        {
+            OnFaceUpAnimationFinished?.Invoke(_cardId);
         }
 
         private void Awake()

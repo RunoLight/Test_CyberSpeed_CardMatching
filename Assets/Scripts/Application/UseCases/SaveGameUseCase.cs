@@ -1,5 +1,4 @@
 ﻿using Domain.Interfaces;
-using UnityEngine;
 
 namespace Application.UseCases
 {
@@ -18,7 +17,6 @@ namespace Application.UseCases
         {
             var state = _gameStateService.SaveState();
             _gameSaver.Save(state);
-            Debug.Log("Game saved");
         }
     }
 }

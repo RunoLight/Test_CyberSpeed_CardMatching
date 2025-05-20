@@ -16,6 +16,8 @@ namespace Domain.Interfaces
         public void FlipCard(int cardId);
         public bool IsCardFlippable(int cardId);
         public List<Card> GetFaceUpCards();
+        public (Card first, Card second) GetPairCards(int firstId, int secondId);
+        public Card GetCard(int id);
         public void MatchCards(List<int> ids);
         public void ResetUnmatchedCards();
 

@@ -1,8 +1,7 @@
-﻿using Application;
-using Application.Services;
+﻿using Application.Services;
 using Application.UseCases;
-using Domain;
 using Domain.Interfaces;
+using Domain.Services;
 using Infrastructure.Generators;
 using Infrastructure.SaveSystem;
 using Infrastructure.SoundSystem;
@@ -32,7 +31,7 @@ namespace EntryPoint
             var movesService = new MovesService();
 
             IGameStateService gameStateService = new GameStateService(scoreService, timerService, movesService);
-            var matchCheckService = new MatchCheckService(gameStateService, soundService);
+            IMatchCheckService matchCheckService = new MatchCheckService();
 
             // UseCases
             var loadGameUseCase = new LoadGameUseCase(saver, gameStateService);
@@ -42,7 +41,7 @@ namespace EntryPoint
             );
 
             var flipUseCase = new FlipCardUseCase(
-                gameStateService, soundService, saveUseCase, matchCheckUseCase, movesService
+                gameStateService, soundService, saveUseCase, movesService
             );
 
             // Behaviours
@@ -50,7 +49,7 @@ namespace EntryPoint
 
             // ViewModel
             var viewModel = new GameViewModel(flipUseCase, gameStateService, saveUseCase, soundService, newGameFactory,
-                timerService, scoreService, movesService);
+                timerService, scoreService, movesService, matchCheckUseCase);
 
             // Link View to ViewModel
             gameView.Init(viewModel);
